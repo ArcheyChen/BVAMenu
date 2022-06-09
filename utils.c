@@ -26,9 +26,9 @@ IWRAM_CODE void gotoChipOffset(u8 MB_Offset,char Lock)
         *(MapperReg2)=addr.byte[2] | 0x80;
     
     //还原
-    *(MapperReg1)=backup[0];
-    *(MapperReg2)=backup[1];
-    *(MapperReg3)=backup[2];
+    // *(MapperReg1)=backup[0];
+    // *(MapperReg2)=backup[1];
+    // *(MapperReg3)=backup[2];
     
     if(Lock)
         __asm("SWI 0");
@@ -46,9 +46,10 @@ IWRAM_CODE char isGame(){
 }
 
 IWRAM_CODE void findGames(){
-    u8 MB_Offset;
+    u16 MB_Offset;
     u8 i;
-    for(MB_Offset = 4 ;MB_Offset < 16; MB_Offset += 4){
+    for(MB_Offset = 4 ;MB_Offset < 256; MB_Offset += 4){
+        REG_IE = 0;
         gotoChipOffset(MB_Offset,0);
         if(isGame){
             char *romName = (char*)0x80000A0;
@@ -60,5 +61,25 @@ IWRAM_CODE void findGames(){
             gameCnt++;
         }
     }
+    
+    REG_IE = 0;
     gotoChipOffset(0,0);//返回menu
+    return;
+}
+IWRAM_CODE void test(){
+    int i;
+    REG_IE = 0;
+    gotoChipOffset(4,0);
+    if(isGame){
+        char *romName = (char*)0x80000A0;
+        for(i=0;i<12;i++){
+            gameEntries[gameCnt].name[i] = romName[i];
+        }
+        gameEntries[gameCnt].name[13] = 0;
+        gameEntries[gameCnt].MB_offset = 4;
+        gameCnt++;
+    }
+    REG_IE = 0;
+    gotoChipOffset(0,0);
+    return;
 }

@@ -53,7 +53,7 @@ void Redraw(){
         for (y=0;y<EntriesPerPage*10;y+=10){
             
             // ROMTableOffset=ROMTableStart + (BytesPerEntry * EntriesPerPage * ROMpage) + (t*BytesPerEntry);
-            if(t<gameCnt)
+            if(t>gameCnt)
                 break;
             t++;
             Itoa(string,ROMpage);
@@ -81,16 +81,26 @@ int main() {
     WriteStringWide( 20, 8, "Loading Roms" );
     
     Flip();
-    // gameCnt = 1;
-    // gameEntries[0].name[0]='N';
-    // gameEntries[0].name[1]='O';
-    // gameEntries[0].name[2]='G';
-    // gameEntries[0].name[3]='M';
-    // gameEntries[0].name[4]='\0';
+    // // gameCnt = 1;
+    // // gameEntries[0].name[0]='N';
+    // // gameEntries[0].name[1]='O';
+    // // gameEntries[0].name[2]='G';
+    // // gameEntries[0].name[3]='M';
+    // // gameEntries[0].name[4]='\0';
     findGames();
-    EraseScreenNoPaletteNoFlip();
-    WriteStringWide( 20, 8, "Load Roms complete" );
-    Flip();
+    // test();
+    // EraseScreenNoPaletteNoFlip();
+    // if(gameCnt>0){
+    //     WriteStringWide( 20, 0, gameEntries[0].name );
+    //     WriteStringWide( 20, 16, gameEntries[1].name );
+    //     WriteStringWide( 20, 32, gameEntries[2].name );
+    // }
+    // WriteStringWide( 20, 48, "Load Roms complete" );
+    // Flip();
+    
+    // while(1){};
+    Redraw();
+    while(1){};
     
     // WriteStringWide( 0, 8, "Find Games Complete" );
     //     Keyhold=0;
