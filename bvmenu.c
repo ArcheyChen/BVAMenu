@@ -1,45 +1,14 @@
 #include "smgbalib.h"
 #include "common.h"
-#define KEY_A 1
-#define KEY_B 2
-#define KEY_SELECT 4
-#define KEY_START 8
-#define KEY_RIGHT 16
-#define KEY_LEFT 32
-#define KEY_UP 64
-#define KEY_DOWN 128
-#define KEY_R 256
-#define KEY_L 512
-#define EntriesPerPage 12
-#define BytesPerEntry 32
 
-u8 gameCnt = 0;
-int* KEYpad =     (int*)0x04000130;
-char* MapperReg1 = (char*)0x0E000002;//Bank 选择信号
-char* MapperReg2 = (char*)0x0E000003;// 与上0x80=Lock
-char* MapperReg3 = (char*)0x0E000004;
-char MapReg1=0;
-char MapReg2=0;
-char MapReg3=0;
-char MapReg4=0;
-
-
-// int ROMTableStart = 0x08010000;
-// int ROMTableOffset=0;
 int ROMpage =0;
 int ROMPointer=0;
 int x=0;
 int y=0;
-char string[]="        ";
-char Dummy_SaveType[]="SRAM_V113";
 int Keyhold=0;
 
-// struct Entry{
-
-// };
-
-// IWRAM_CODE extern void MapperSet(char Reg1,char Reg2,char Reg3,char Reg4,char Lock);
-
+void Redraw();
+void keyPadSelect();
 void Redraw(){
         char t=0;
         int MB_Offset = 4;//前4个MB是Menu的，从4MB后开始找
@@ -76,7 +45,13 @@ int main() {
     findGames();
     
     Redraw();
+    keyPadSelect();
     
+    
+    return 0;
+}
+
+void keyPadSelect(){
     while(1) {
         if(!((*KEYpad) & KEY_RIGHT)) {
             ROMpage++;
@@ -122,6 +97,4 @@ int main() {
         
         }
     }
-    
-    return 0;
 }
