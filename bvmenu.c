@@ -43,6 +43,7 @@ int Keyhold=0;
 void Redraw(){
         char t=0;
         int MB_Offset = 4;//前4个MB是Menu的，从4MB后开始找
+        int gameIdx = 0;
         EraseScreenNoPaletteNoFlip();
 
         WriteStringWide( 20, 8, "Select ROM, Press A" );
@@ -50,12 +51,7 @@ void Redraw(){
         if(gameCnt==0){
             WriteStringWide(0,0,"No games found");
         }
-        for (y=0;y<EntriesPerPage*10;y+=10){
-            
-            // ROMTableOffset=ROMTableStart + (BytesPerEntry * EntriesPerPage * ROMpage) + (t*BytesPerEntry);
-            if(EntriesPerPage * ROMpage + t>gameCnt)
-                break;
-            t++;
+        for (y=0,gameIdx=EntriesPerPage * ROMpage + t;y<EntriesPerPage*10 && gameIdx < gameCnt;y+=10,t++,gameIdx = EntriesPerPage * ROMpage + t){
             Itoa(string,ROMpage);
             WriteStringWide(0,0,"Page");
             WriteStringWide(20,0,string);//第几页
