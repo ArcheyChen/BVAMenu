@@ -20,5 +20,4 @@ extern char* MapperReg3;
 IWRAM_CODE void findGames();
 IWRAM_CODE void gotoChipOffset(u8 MB_Offset,char Lock);
 IWRAM_CODE char isGame();
-IWRAM_CODE void test();
 #endif
