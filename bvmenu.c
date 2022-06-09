@@ -15,8 +15,8 @@
 
 u8 gameCnt = 0;
 int* KEYpad =     (int*)0x04000130;
-char* MapperReg1 = (char*)0x0E000002;
-char* MapperReg2 = (char*)0x0E000003;
+char* MapperReg1 = (char*)0x0E000002;//Bank 选择信号
+char* MapperReg2 = (char*)0x0E000003;// 与上0x80=Lock
 char* MapperReg3 = (char*)0x0E000004;
 char MapReg1=0;
 char MapReg2=0;
@@ -53,13 +53,15 @@ void Redraw(){
         for (y=0;y<EntriesPerPage*10;y+=10){
             
             // ROMTableOffset=ROMTableStart + (BytesPerEntry * EntriesPerPage * ROMpage) + (t*BytesPerEntry);
+            if(t<gameCnt)
+                break;
             t++;
             Itoa(string,ROMpage);
             WriteStringWide(0,0,"Page");
             WriteStringWide(20,0,string);//第几页
             
             WriteStringWide(0,24+(ROMPointer*10),">");
-            WriteStringWide( 8, 24+y, (unsigned char*)gameEntries->name);
+            WriteStringWide( 8, 24+y, (unsigned char*)gameEntries[EntriesPerPage * ROMpage + t].name);
         }
         Keyhold=0;
         Flip();
@@ -72,58 +74,77 @@ int main() {
                 // MapReg4=0x80;
                 // REG_IE=0;
                 // MapperSet(MapReg1,MapReg2,MapReg3,MapReg4);
+    // REG_IE=0;
+    // gotoChipOffset(240,1);
+    EraseScreenNoPaletteNoFlip();
     Initialize();
+    WriteStringWide( 20, 8, "Loading Roms" );
+    
+    Flip();
+    // gameCnt = 1;
+    // gameEntries[0].name[0]='N';
+    // gameEntries[0].name[1]='O';
+    // gameEntries[0].name[2]='G';
+    // gameEntries[0].name[3]='M';
+    // gameEntries[0].name[4]='\0';
     findGames();
-    Redraw();
+    EraseScreenNoPaletteNoFlip();
+    WriteStringWide( 20, 8, "Load Roms complete" );
+    Flip();
+    
+    // WriteStringWide( 0, 8, "Find Games Complete" );
+    //     Keyhold=0;
+    //     Flip();
+    // Redraw();
     
 
     //while(1);
     
-    while(1) {
-        if(!((*KEYpad) & KEY_RIGHT)) {
-            ROMpage++;
-            ROMPointer=0;
-            if (*(unsigned char*)(gameEntries[EntriesPerPage*ROMpage+ROMPointer].name)==0){ROMpage--;}
-            PlayNote(2000,5);
-            Redraw();
-            while(!((*KEYpad)& KEY_RIGHT)){Keyhold++;if(Keyhold==100000){Keyhold=0;break;}}
-            }
-        if(!((*KEYpad) & KEY_LEFT)) {
-            ROMpage--;
-            ROMPointer=0;
-            if (ROMpage<0){ROMpage=0;}
-            PlayNote(2000,5);
-            Redraw();
-            while(!((*KEYpad)& KEY_LEFT)){Keyhold++;if(Keyhold==100000){Keyhold=0;break;}}
-            }
-        if(!((*KEYpad) & KEY_UP)) {
-            ROMPointer--;
-            if (ROMPointer<0){ROMPointer=EntriesPerPage-1;}
+    // while(1) {
+    //     if(!((*KEYpad) & KEY_RIGHT)) {
+    //         ROMpage++;
+    //         ROMPointer=0;
+    //         if (*(unsigned char*)(gameEntries[EntriesPerPage*ROMpage+ROMPointer].name)==0){ROMpage--;}
+    //         PlayNote(2000,5);
+    //         Redraw();
+    //         while(!((*KEYpad)& KEY_RIGHT)){Keyhold++;if(Keyhold==100000){Keyhold=0;break;}}
+    //         }
+    //     if(!((*KEYpad) & KEY_LEFT)) {
+    //         ROMpage--;
+    //         ROMPointer=0;
+    //         if (ROMpage<0){ROMpage=0;}
+    //         PlayNote(2000,5);
+    //         Redraw();
+    //         while(!((*KEYpad)& KEY_LEFT)){Keyhold++;if(Keyhold==100000){Keyhold=0;break;}}
+    //         }
+    //     if(!((*KEYpad) & KEY_UP)) {
+    //         ROMPointer--;
+    //         if (ROMPointer<0){ROMPointer=EntriesPerPage-1;}
 
-            // while(*(unsigned char*)(ROMTableStart + (BytesPerEntry * EntriesPerPage * ROMpage)+(ROMPointer*32))==0){ROMPointer--;}
-            while(*(unsigned char*)(gameEntries[EntriesPerPage*ROMpage+ROMPointer].name)==0){ROMPointer--;}
+    //         // while(*(unsigned char*)(ROMTableStart + (BytesPerEntry * EntriesPerPage * ROMpage)+(ROMPointer*32))==0){ROMPointer--;}
+    //         while(*(unsigned char*)(gameEntries[EntriesPerPage*ROMpage+ROMPointer].name)==0){ROMPointer--;}
 
 
-            PlayNote(2000,5);
-            Redraw();
-            while(!((*KEYpad)& KEY_UP)){Keyhold++;if(Keyhold==50000){Keyhold=0;break;}}
-            }
-        if(!((*KEYpad) & KEY_DOWN)) {
-            ROMPointer++;
-            if (*(unsigned char*)(gameEntries[EntriesPerPage*ROMpage+ROMPointer].name)==0){ROMPointer=0;}
+    //         PlayNote(2000,5);
+    //         Redraw();
+    //         while(!((*KEYpad)& KEY_UP)){Keyhold++;if(Keyhold==50000){Keyhold=0;break;}}
+    //         }
+    //     if(!((*KEYpad) & KEY_DOWN)) {
+    //         ROMPointer++;
+    //         if (*(unsigned char*)(gameEntries[EntriesPerPage*ROMpage+ROMPointer].name)==0){ROMPointer=0;}
 
-            if (ROMPointer==EntriesPerPage){ROMPointer=0;}
-            PlayNote(2000,5);
-            Redraw();
-            while(!((*KEYpad)& KEY_DOWN)){Keyhold++;if(Keyhold==50000){Keyhold=0;break;}}
-            }
+    //         if (ROMPointer==EntriesPerPage){ROMPointer=0;}
+    //         PlayNote(2000,5);
+    //         Redraw();
+    //         while(!((*KEYpad)& KEY_DOWN)){Keyhold++;if(Keyhold==50000){Keyhold=0;break;}}
+    //         }
 
-            if(!((*KEYpad) & KEY_A)) {
-                REG_IE=0;
-                gotoChipOffset(gameEntries[EntriesPerPage*ROMpage+ROMPointer].MB_offset,1);
+    //         if(!((*KEYpad) & KEY_A)) {
+    //             REG_IE=0;
+    //             gotoChipOffset(gameEntries[EntriesPerPage*ROMpage+ROMPointer].MB_offset,1);
         
-        }
-    }
+    //     }
+    // }
     
     return 0;
 }

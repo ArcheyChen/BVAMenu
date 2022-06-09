@@ -7,10 +7,10 @@
 @del *.gba
 
 @REM Compile game
-gcc -c -O3 bvmenu.c
+gcc -c -O3 bvmenu.c utils.c
 
 @REM link to smgbalib
-gcc -o bvmenu.elf bvmenu.o smgbalib.a
+gcc -o bvmenu.elf bvmenu.o utils.o smgbalib.a
 
 @REM Translate executable to GBA rom format
 objcopy -O binary bvmenu.elf bvmenu.gba

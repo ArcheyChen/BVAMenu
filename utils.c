@@ -1,28 +1,37 @@
-#include "common.h"
 #include "smgbalib.h"
-IWRAM_CODE void gotoChipOffset(u32 chipAddr,char Lock)
+#include "common.h"
+
+IWRAM_CODE void gotoChipOffset(u8 MB_Offset,char Lock)
 {
+    
+    u32 chipAddr = (MB_Offset/32 * 0x10000000) + (0x4000C0 + (MB_Offset & 31) * 0x020202);
     union{
 		u32 addr;
 		u8 byte[4];
 	}addr;
 	addr.addr = chipAddr;
-	*(vu8*)0x0A000002 = addr.byte[3];
-	*(vu8*)0x0A000003 = addr.byte[2];
-	*(vu8*)0x0A000004 = addr.byte[1];
     
+    u8 backup[3];
+    backup[0] = *MapperReg1;
+    backup[1] = *MapperReg2;
+    backup[2] = *MapperReg3;
+
+    u8 bankId = MB_Offset/32;
+    u8 bankOffset = MB_Offset & 31;
+
     *(MapperReg1)=addr.byte[3];
     *(MapperReg2)=addr.byte[2];
     *(MapperReg3)=addr.byte[1];
     if(Lock)
         *(MapperReg2)=addr.byte[2] | 0x80;
     
-    //为什么这要重复两遍呢
-    *(MapperReg1)=addr.byte[3];
-    *(MapperReg2)=addr.byte[2];
-    *(MapperReg3)=addr.byte[1];
+    //还原
+    *(MapperReg1)=backup[0];
+    *(MapperReg2)=backup[1];
+    *(MapperReg3)=backup[2];
     
-    __asm("SWI 0");
+    if(Lock)
+        __asm("SWI 0");
 
     return;
 }
@@ -39,9 +48,8 @@ IWRAM_CODE char isGame(){
 IWRAM_CODE void findGames(){
     u8 MB_Offset;
     u8 i;
-    for(MB_Offset = 4 ;MB_Offset < 256; MB_Offset += 4){
-        u32 chipAddr = (MB_Offset/32 * 0x10000000) + (0x4000C0 + (MB_Offset & 31) * 0x20202);
-        gotoChipOffset(chipAddr,0);
+    for(MB_Offset = 4 ;MB_Offset < 16; MB_Offset += 4){
+        gotoChipOffset(MB_Offset,0);
         if(isGame){
             char *romName = (char*)0x80000A0;
             for(i=0;i<12;i++){
