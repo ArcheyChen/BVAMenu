@@ -13,7 +13,7 @@
 #define KEY_DOWN 128
 #define KEY_R 256
 #define KEY_L 512
-#define EntriesPerPage 12
+#define EntriesPerPage 11
 #define BytesPerEntry 32
 #define GAME_NAME_LEN 16
 

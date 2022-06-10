@@ -23,9 +23,6 @@ IWRAM_CODE void gotoChipOffset(u8 MB_Offset,char Lock)
 		u8 byte[4];
 	}addr;
 	addr.addr = chipAddr;
-    if(Lock){
-        backupSram();
-    }
 	u16 data = *(vu16*)(0xBD|0x8000000);
     
 
@@ -45,7 +42,7 @@ IWRAM_CODE void gotoChipOffset(u8 MB_Offset,char Lock)
 	int timeout = 0x1000;
 	while(timeout && (*(vu16*)(0xBD|0x8000000)) == data)timeout--;
     
-    if(Lock){
+    if(Lock){//Backup is done is findGames()
         restoreSram();
         __asm("SWI 0");
     }
@@ -67,6 +64,7 @@ IWRAM_CODE void findGames(){
 	u32 checksum = 0;
     unsigned int i;
     u16 MB_Offset;
+    backupSram();
     for(MB_Offset = 4 ;MB_Offset < 256; MB_Offset += 4){\
         gotoChipOffset(MB_Offset,0);
         if(isGame()){
@@ -81,5 +79,6 @@ IWRAM_CODE void findGames(){
     }
     
     gotoChipOffset(0,0);//返回menu
+    // restoreSram();
     return;
 }
