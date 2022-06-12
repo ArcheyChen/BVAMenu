@@ -16,7 +16,7 @@ objcopy -O binary bvmenu.elf bvmenu.gba
 
 
 @REM Fix header
-gbafix.exe bvmenu.gba -tBVAMENU -cMROM -mCN -r1 -p
+gbafix.exe bvmenu.gba -tBVAMENU -cMROM -mCN -r11 -p
 
 @REM Clean binaries
 @del *.o
