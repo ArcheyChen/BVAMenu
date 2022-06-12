@@ -1,6 +1,7 @@
 #include "smgbalib.h"
 #include "common.h"
-
+__attribute__ ((section(".devkitadv.config"))) int __gba_multiboot;
+// MULTIBOOT
 int ROMpage =0;
 int ROMPointer=0;
 int x=0;

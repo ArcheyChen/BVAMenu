@@ -14,9 +14,8 @@ gcc -o bvmenu.elf bvmenu.o utils.o common.o smgbalib.a
 @REM Translate executable to GBA rom format
 objcopy -O binary bvmenu.elf bvmenu.gba
 
-
 @REM Fix header
-gbafix.exe bvmenu.gba -tBVAMENU -cMROM -mCN -r11 -p
+gbafix.exe bvmenu.gba -tBVAMENU -cMROM -mCN -r12 
 
 @REM Clean binaries
 @del *.o
