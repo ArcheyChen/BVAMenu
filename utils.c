@@ -79,6 +79,6 @@ IWRAM_CODE void findGames(){
     }
     
     gotoChipOffset(0,0);//返回menu
-    // restoreSram();
+    restoreSram();
     return;
 }

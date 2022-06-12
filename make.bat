@@ -7,8 +7,7 @@
 @del *.gba
 
 @REM Compile game
-gcc -c -O3 bvmenu.c utils.c common.c
-
+gcc -c -O3 bvmenu.c utils.c common.c -marm
 @REM link to smgbalib
 gcc -o bvmenu.elf bvmenu.o utils.o common.o smgbalib.a
 
